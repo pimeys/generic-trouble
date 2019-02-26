@@ -59,11 +59,11 @@ mod tests {
     fn two_datasets_are_the_same() {
         let mut dataset1 = Dataset::new("Cats and dogs");
         dataset1.items.push(Box::new(DogItem::new("woofie", 4)));
-        dataset1.items.push(Box::new(CatItem::new("woofie", 10000)));
+        dataset1.items.push(Box::new(CatItem::new("meowie", 10000)));
 
         let mut dataset2 = Dataset::new("Cats and dogs");
         dataset2.items.push(Box::new(DogItem::new("woofie", 4)));
-        dataset2.items.push(Box::new(CatItem::new("woofie", 10000)));
+        dataset2.items.push(Box::new(CatItem::new("meowie", 10000)));
 
         assert_eq!(dataset1, dataset2);
     }
