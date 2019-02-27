@@ -2,10 +2,10 @@ pub trait Itemizable {
     fn foreign_key(&self) -> usize;
 }
 
-#[derive(Default)]
+#[derive(Debug, Default, PartialEq)]
 pub struct Dataset {
     pub name: &'static str,
-    pub items: Vec<Box<dyn Itemizable>>,
+    pub items: Vec<Item>,
 }
 
 impl Dataset {
@@ -15,8 +15,16 @@ impl Dataset {
             ..Default::default()
         }
     }
+
+    pub fn push<T>(&mut self, item: T)
+    where
+        T: Into<Item>,
+    {
+        self.items.push(item.into());
+    }
 }
 
+#[derive(Debug, Default, PartialEq)]
 pub struct DogItem {
     pub name: &'static str,
     pub age: u8,
@@ -34,6 +42,7 @@ impl Itemizable for DogItem {
     }
 }
 
+#[derive(Debug, Default, PartialEq)]
 pub struct CatItem {
     pub name: &'static str,
     pub meows: u16,
@@ -51,6 +60,24 @@ impl Itemizable for CatItem {
     }
 }
 
+#[derive(Debug, PartialEq)]
+pub enum Item {
+    Cat(CatItem),
+    Dog(DogItem),
+}
+
+impl From<CatItem> for Item {
+    fn from(cat: CatItem) -> Item {
+        Item::Cat(cat)
+    }
+}
+
+impl From<DogItem> for Item {
+    fn from(cat: DogItem) -> Item {
+        Item::Dog(cat)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -58,12 +85,12 @@ mod tests {
     #[test]
     fn two_datasets_are_the_same() {
         let mut dataset1 = Dataset::new("Cats and dogs");
-        dataset1.items.push(Box::new(DogItem::new("woofie", 4)));
-        dataset1.items.push(Box::new(CatItem::new("meowie", 10000)));
+        dataset1.push(DogItem::new("woofie", 4));
+        dataset1.push(CatItem::new("meowie", 10000));
 
         let mut dataset2 = Dataset::new("Cats and dogs");
-        dataset2.items.push(Box::new(DogItem::new("woofie", 4)));
-        dataset2.items.push(Box::new(CatItem::new("meowie", 10000)));
+        dataset2.push(DogItem::new("woofie", 4));
+        dataset2.push(CatItem::new("meowie", 10000));
 
         assert_eq!(dataset1, dataset2);
     }
